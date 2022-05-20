@@ -405,11 +405,6 @@ public abstract class AbstractPythonConnexionServerCodegen extends AbstractPytho
                                     StringBuffer response = new StringBuffer();
 
                                     while ((URL_line = reader.readLine()) != null) {
-                                        /*if (!URL_line.contains("import")) 
-                                            URL_data += "    " + URL_line + "\n";
-                                        else {
-                                            URL_imports += URL_line + "\n";
-                                        }*/
                                         response.append(URL_line); 
                                     }
 
