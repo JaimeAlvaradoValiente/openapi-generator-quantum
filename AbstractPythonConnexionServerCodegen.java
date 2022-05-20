@@ -15,7 +15,7 @@
  */
 
 package org.openapitools.codegen.languages;
-
+import org.json.*;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -34,7 +34,10 @@ import org.openapitools.codegen.*;
 import org.openapitools.codegen.meta.features.DocumentationFeature;
 import org.openapitools.codegen.utils.ModelUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactory; 
+
+
+
 
 import java.io.File;
 import java.util.*;
@@ -43,6 +46,8 @@ import java.io.*;
 
 import static org.openapitools.codegen.utils.StringUtils.camelize;
 import static org.openapitools.codegen.utils.StringUtils.underscore;
+
+
 
 public abstract class AbstractPythonConnexionServerCodegen extends AbstractPythonCodegen implements CodegenConfig {
     private final Logger LOGGER = LoggerFactory.getLogger(AbstractPythonConnexionServerCodegen.class);
@@ -387,7 +392,45 @@ public abstract class AbstractPythonConnexionServerCodegen extends AbstractPytho
                             if (operation.getExtensions().get("x-quantumCode") != null) {
                                 String quantum_url = (String) operation.getExtensions().get("x-quantumCode");
                                 try {
-                                    URL url = new URL(quantum_url);
+                                    
+                                    quantum_url = "http://localhost:8081/code?url=" + quantum_url;
+                                    URL url = new URL (quantum_url);
+                                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                                    conn.setRequestMethod("GET");
+
+                                    BufferedReader reader = new BufferedReader(new InputStreamReader(
+                                            conn.getInputStream()));
+                                    String URL_line = null, URL_data = "", URL_imports = "";
+                                    
+                                    StringBuffer response = new StringBuffer();
+
+                                    while ((URL_line = reader.readLine()) != null) {
+                                        /*if (!URL_line.contains("import")) 
+                                            URL_data += "    " + URL_line + "\n";
+                                        else {
+                                            URL_imports += URL_line + "\n";
+                                        }*/
+                                        response.append(URL_line); 
+                                    }
+
+                                    //print in String
+                                    //System.out.println(response.toString());
+
+                                    //Read JSON response
+                                    JSONObject myResponse = new JSONObject(response.toString());
+                                    JSONArray myResponseArr = myResponse.getJSONArray("code");
+
+                                    System.out.println("result after Reading JSON Response");
+                                    for (int i = 0; i < myResponseArr.length(); i++) {
+                                        if (!myResponseArr.get(i).toString().contains("import")) 
+                                            URL_data += "    " + myResponseArr.get(i).toString() + "\n";
+                                        else {
+                                            URL_imports += myResponseArr.get(i).toString() + "\n";
+                                        }
+        
+                                    }
+                                
+                                    /*URL url = new URL(quantum_url);
                                     URLConnection connection = url.openConnection();
                                     BufferedReader reader = new BufferedReader(new InputStreamReader(
                                             connection.getInputStream()));
@@ -399,7 +442,7 @@ public abstract class AbstractPythonConnexionServerCodegen extends AbstractPytho
                                         else {
                                             URL_imports += URL_line + "\n";
                                         }
-                                    }
+                                    }*/
                                     System.out.println(URL_data);
                                     operation.getExtensions().replace("x-quantumCode", URL_data);
                                     System.out.println(URL_imports);
