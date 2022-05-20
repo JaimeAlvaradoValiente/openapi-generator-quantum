@@ -5,3 +5,10 @@ modules\openapi-generator\src\main\java.org.opneapitools.codegen\languajes\Abstr
 
 Modificada la plantilla template en: 
 modules\openapi-generator\src\main\resources\python-quantum\controller.mustache 
+
+##Comandos para lanzar 
+
+mvn clean package -DskipTests
+
+java -jar modules\openapi-generator-cli\target\openapi-generator-cli.jar generate -i C:\Users\jalva\Downloads\OpenAPI\openapi.yaml -g python-quantum -o c:\temp\quantum
+
