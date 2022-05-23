@@ -10,5 +10,5 @@ modules\openapi-generator\src\main\resources\python-quantum\controller.mustache
 
 mvn clean package -DskipTests
 
-java -jar modules\openapi-generator-cli\target\openapi-generator-cli.jar generate -i C:\Users\jalva\Downloads\OpenAPI\openapi.yaml -g python-quantum -o c:\temp\quantum
+java -jar modules\openapi-generator-cli\target\openapi-generator-cli.jar generate -i openapi_quantum.yaml -g python-quantum -o c:\temp\quantum
 
