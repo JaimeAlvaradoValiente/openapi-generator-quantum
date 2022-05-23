@@ -1,6 +1,6 @@
 # openapi-generator-quantum
 
-Añadida lógica para procesar la nueva variable extension en:
+Añadida lógica para procesar la nueva variable extension (x-quantumcode) en:
 modules\openapi-generator\src\main\java.org.opneapitools.codegen\languajes\AbstractPythonConnexionServerCodegen
 
 Modificada la plantilla template en: 
