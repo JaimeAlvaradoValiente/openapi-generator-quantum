@@ -28,7 +28,7 @@ paths:
           description: successful operation
         '405':
           description: Invalid execution
-      x-quantumCode: 'circuit={%22cols%22:[[%22H%22,%22H%22],[%22X%22,%22X%22],[%22%E2%80%A2%22,%22Z%22],[%22X%22,%22X%22],[%22H%22,%22H%22],[%22Z%22,%22Z%22],[%22%E2%80%A2%22,%22Z%22],[%22H%22,%22H%22],[%22Measure%22,%22Measure%22]]}'
+      x-quantumCode: 'file:///C:/Users/javie/Downloads/Telegram%20Desktop/quirk.html#circuit={%22cols%22:[[%22H%22,%22H%22],[%22X%22,%22X%22],[%22%E2%80%A2%22,%22Z%22],[%22X%22,%22X%22],[%22H%22,%22H%22],[%22Z%22,%22Z%22],[%22%E2%80%A2%22,%22Z%22],[%22H%22,%22H%22],[%22Measure%22,%22Measure%22]]}'
   /findByCategory:
     get:
       tags:

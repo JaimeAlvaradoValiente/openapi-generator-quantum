@@ -393,9 +393,10 @@ public abstract class AbstractPythonConnexionServerCodegen extends AbstractPytho
                                 String quantum_url = (String) operation.getExtensions().get("x-quantumCode");
                                 try {
                                     
-                                    quantum_url = "http://localhost:8081/code?url=" + quantum_url;
-                                    URL url = new URL (quantum_url);
+                                    String flask_url = "http://localhost:8081/code";
+                                    URL url = new URL (flask_url);
                                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                                    conn.setRequestProperty ("x-url", quantum_url);
                                     conn.setRequestMethod("GET");
 
                                     BufferedReader reader = new BufferedReader(new InputStreamReader(
