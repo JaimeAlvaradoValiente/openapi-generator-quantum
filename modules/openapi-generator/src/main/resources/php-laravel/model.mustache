@@ -1,0 +1,21 @@
+<?php
+{{#models}}{{#model}}/**
+ * {{classname}}
+ */
+namespace {{modelPackage}};
+
+/**
+ * {{classname}}
+ */
+class {{classname}} {
+
+    {{#vars}}
+    /** @var {{{dataType}}} ${{name}} {{description}}*/
+{{#deprecated}}
+    /** @deprecated */
+{{/deprecated}}
+    private ${{name}};
+
+    {{/vars}}
+}
+{{/model}}{{/models}}
