@@ -418,8 +418,12 @@ public abstract class AbstractPythonConnexionServerCodegen extends AbstractPytho
 
                                     System.out.println("result after Reading JSON Response");
                                     for (int i = 0; i < myResponseArr.length(); i++) {
-                                        if (!myResponseArr.get(i).toString().contains("import")) 
+                                        if (!myResponseArr.get(i).toString().contains("import")) {
+                                            if (URL_data.equals(""))
+                                                URL_data +=  myResponseArr.get(i).toString() + "\n";
+                                            else 
                                             URL_data += "    " + myResponseArr.get(i).toString() + "\n";
+                                        }
                                         else {
                                             URL_imports += myResponseArr.get(i).toString() + "\n";
                                         }
