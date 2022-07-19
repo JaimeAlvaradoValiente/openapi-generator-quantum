@@ -12,3 +12,7 @@ mvn clean package -DskipTests
 
 java -jar modules\openapi-generator-cli\target\openapi-generator-cli.jar generate -i openapi_quantum.yaml -g python-quantum -o c:\temp\quantum
 
+## Para desplegar el servicio generado
+
+python3 -m openapi_server
+
