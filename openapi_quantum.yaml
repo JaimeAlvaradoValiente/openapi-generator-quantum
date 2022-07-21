@@ -14,19 +14,54 @@ tags:
   - name: quantum_code
     description: Everything about your quantum service code and circuits
 paths:
-  /circuit/grover:
+  /circuit/randomAWS:
     get:
       tags:
         - quantum_code
-      summary: Get the circuit implementation of Grover Algorithm
+      summary: Get the circuit implementation for random numbers
       description: ''
-      operationId: grover_circuit
+      operationId: random_circuitAWS
+      parameters:
+        - name: machine
+          in: query
+          description: Name of the machine where to execute
+          required: true
+          style: form
+          explode: false
+          deprecated: true
+          schema:
+            type: string
       responses:
         '200':
           description: successful operation
         '405':
           description: Invalid execution
-      x-quantumCode: 'file:///C:/Users/javie/Downloads/Telegram%20Desktop/quirk.html#circuit={%22cols%22:[[%22H%22,%22H%22],[%22X%22,%22X%22],[%22%E2%80%A2%22,%22Z%22],[%22X%22,%22X%22],[%22H%22,%22H%22],[%22Z%22,%22Z%22],[%22%E2%80%A2%22,%22Z%22],[%22H%22,%22H%22],[%22Measure%22,%22Measure%22]]}'
+      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],[%22Measure%22],[1,%22Measure%22],[1,1,%22Measure%22],[1,1,1,%22Measure%22],[1,1,1,1,%22Measure%22]]}'
+      x-provider: 'aws'
+  /circuit/randomIBM:
+    get:
+      tags:
+        - quantum_code
+      summary: Get the circuit implementation for random numbers
+      description: ''
+      operationId: random_circuitIBM
+      parameters:
+        - name: machine
+          in: query
+          description: Name of the machine where to execute
+          required: true
+          style: form
+          explode: false
+          deprecated: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid execution
+      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],[%22Measure%22],[1,%22Measure%22],[1,1,%22Measure%22],[1,1,1,%22Measure%22],[1,1,1,1,%22Measure%22]]}'
+      x-provider: 'ibm'
   /findByCategory:
     get:
       tags:

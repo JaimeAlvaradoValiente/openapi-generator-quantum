@@ -27,6 +27,20 @@ paths:
         '405':
           description: Invalid execution
       x-quantumCode: 'file:///C:/Users/javie/Downloads/Telegram%20Desktop/quirk.html#circuit={%22cols%22:[[%22H%22,%22H%22],[%22X%22,%22X%22],[%22%E2%80%A2%22,%22Z%22],[%22X%22,%22X%22],[%22H%22,%22H%22],[%22Z%22,%22Z%22],[%22%E2%80%A2%22,%22Z%22],[%22H%22,%22H%22],[%22Measure%22,%22Measure%22]]}'
+  /circuit/random:
+    get:
+      tags:
+        - quantum_code
+      summary: Get the circuit implementation for random numbers
+      description: ''
+      operationId: random_circuit
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid execution
+      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],
+      [%22Measure%22],[1,%22Measure%22],[1,1,%22Measure%22],[1,1,1,%22Measure%22],[1,1,1,1,%22Measure%22]]}'
   /findByCategory:
     get:
       tags:
@@ -35,7 +49,7 @@ paths:
       description: Multiple status values can be provided with comma separated strings
       operationId: findServiceByCategory
       parameters:
-        - name: quantum
+        - name: qua
           in: query
           description: Status values that need to be considered for filter
           required: true
@@ -58,3 +72,45 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/quantum'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/quantum'
+        '400':
+          description: Invalid status value
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+components:
+  schemas:
+    Category:
+      title: quantum category
+      description: A category for a quantum code
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          pattern: ^[a-zA-Z0-9]+[a-zA-Z0-9\.\-_]*[a-zA-Z0-9]+$
+      xml:
+        name: Category
+    quantum:
+      title: quantum code
+      description: quantum code 
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        category:
+          $ref: '#/components/schemas/Category'
+        name:
+          type: string
+          example: gate-based
+      xml:
+        name: quantum
