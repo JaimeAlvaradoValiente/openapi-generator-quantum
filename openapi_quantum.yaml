@@ -14,13 +14,13 @@ tags:
   - name: quantum_code
     description: Everything about your quantum service code and circuits
 paths:
-  /circuit/randomAWS:
+  /circuit/randomNumber:
     get:
       tags:
         - quantum_code
       summary: Get the circuit implementation for random numbers
       description: ''
-      operationId: random_circuitAWS
+      operationId: randomNumber_circuit
       parameters:
         - name: machine
           in: query
@@ -38,13 +38,13 @@ paths:
           description: Invalid execution
       x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],[%22Measure%22],[1,%22Measure%22],[1,1,%22Measure%22],[1,1,1,%22Measure%22],[1,1,1,1,%22Measure%22]]}'
       x-provider: 'aws'
-  /circuit/randomIBM:
+  /circuit/integerFactorization:
     get:
       tags:
         - quantum_code
-      summary: Get the circuit implementation for random numbers
+      summary: Get the circuit implementation for integer factorization
       description: ''
-      operationId: random_circuitIBM
+      operationId: factorization_circuit
       parameters:
         - name: machine
           in: query
@@ -60,7 +60,7 @@ paths:
           description: successful operation
         '405':
           description: Invalid execution
-      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],[%22Measure%22],[1,%22Measure%22],[1,1,%22Measure%22],[1,1,1,%22Measure%22],[1,1,1,1,%22Measure%22]]}'
+      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[1,1,1,1,%22X%22],[%22%E2%80%A2%22,1,1,1,1,%22X%22],[%22%E2%80%A2%22,1,1,1,1,1,%22X%22],[1,%22%E2%80%A2%22,1,1,%22X%22],[1,%22%E2%80%A2%22,1,1,1,1,%22X%22],[%22%E2%80%A2%22,%22%E2%80%A2%22,1,1,%22X%22],[%22%E2%80%A2%22,%22%E2%80%A2%22,1,1,1,%22X%22],[%22%E2%80%A2%22,%22%E2%80%A2%22,1,1,1,1,%22X%22],[%22%E2%80%A2%22,%22%E2%80%A2%22,1,1,1,1,1,%22X%22]]}'
       x-provider: 'ibm'
   /findByCategory:
     get:

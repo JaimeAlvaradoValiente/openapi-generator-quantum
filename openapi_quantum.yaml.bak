@@ -14,33 +14,54 @@ tags:
   - name: quantum_code
     description: Everything about your quantum service code and circuits
 paths:
-  /circuit/grover:
-    get:
-      tags:
-        - quantum_code
-      summary: Get the circuit implementation of Grover Algorithm
-      description: ''
-      operationId: grover_circuit
-      responses:
-        '200':
-          description: successful operation
-        '405':
-          description: Invalid execution
-      x-quantumCode: 'file:///C:/Users/javie/Downloads/Telegram%20Desktop/quirk.html#circuit={%22cols%22:[[%22H%22,%22H%22],[%22X%22,%22X%22],[%22%E2%80%A2%22,%22Z%22],[%22X%22,%22X%22],[%22H%22,%22H%22],[%22Z%22,%22Z%22],[%22%E2%80%A2%22,%22Z%22],[%22H%22,%22H%22],[%22Measure%22,%22Measure%22]]}'
-  /circuit/random:
+  /circuit/randomNumber:
     get:
       tags:
         - quantum_code
       summary: Get the circuit implementation for random numbers
       description: ''
-      operationId: random_circuit
+      operationId: randomNumber_circuit
+      parameters:
+        - name: machine
+          in: query
+          description: Name of the machine where to execute
+          required: true
+          style: form
+          explode: false
+          deprecated: true
+          schema:
+            type: string
       responses:
         '200':
           description: successful operation
         '405':
           description: Invalid execution
-      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],
-      [%22Measure%22],[1,%22Measure%22],[1,1,%22Measure%22],[1,1,1,%22Measure%22],[1,1,1,1,%22Measure%22]]}'
+      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],[%22Measure%22],[1,%22Measure%22],[1,1,%22Measure%22],[1,1,1,%22Measure%22],[1,1,1,1,%22Measure%22]]}'
+      x-provider: 'aws'
+  /circuit/integerFactorization:
+    get:
+      tags:
+        - quantum_code
+      summary: Get the circuit implementation for integer factorization
+      description: ''
+      operationId: factorization_circuit
+      parameters:
+        - name: machine
+          in: query
+          description: Name of the machine where to execute
+          required: true
+          style: form
+          explode: false
+          deprecated: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid execution
+      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],[%22Measure%22],[1,%22Measure%22],[1,1,%22Measure%22],[1,1,1,%22Measure%22],[1,1,1,1,%22Measure%22]]}'
+      x-provider: 'ibm'
   /findByCategory:
     get:
       tags:
