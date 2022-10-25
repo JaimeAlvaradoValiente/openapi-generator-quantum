@@ -14,13 +14,13 @@ tags:
   - name: quantum_code
     description: Everything about your quantum service code and circuits
 paths:
-  /circuit/randomNumber:
+  /circuit/randomAWS:
     get:
       tags:
         - quantum_code
-      summary: Get the circuit implementation for random numbers
+      summary: Get the circuit implementation of Grover Algorithm
       description: ''
-      operationId: randomNumber_circuit
+      operationId: grover_circuitAWS
       parameters:
         - name: machine
           in: query
@@ -31,36 +31,54 @@ paths:
           deprecated: true
           schema:
             type: string
+        - name: shots
+          in: query
+          description: Number of shots
+          required: true
+          style: form
+          explode: false
+          deprecated: true
+          schema:
+            type: number
       responses:
         '200':
           description: successful operation
         '405':
           description: Invalid execution
-      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],[%22Measure%22],[1,%22Measure%22],[1,1,%22Measure%22],[1,1,1,%22Measure%22],[1,1,1,1,%22Measure%22]]}'
+      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],[%22Measure%22,%22Measure%22,%22Measure%22,%22Measure%22,%22Measure%22]]}'
       x-provider: 'aws'
-  /circuit/integerFactorization:
+  /circuit/randomIBM:
     get:
       tags:
         - quantum_code
-      summary: Get the circuit implementation for integer factorization
+      summary: Get the circuit implementation of Grover Algorithm
       description: ''
-      operationId: factorization_circuit
+      operationId: grover_circuitIBM
       parameters:
         - name: machine
           in: query
           description: Name of the machine where to execute
-          required: true
+          required: false
           style: form
           explode: false
           deprecated: true
           schema:
             type: string
+        - name: shots
+          in: query
+          description: Number of shots
+          required: true
+          style: form
+          explode: false
+          deprecated: true
+          schema:
+            type: number
       responses:
         '200':
           description: successful operation
         '405':
           description: Invalid execution
-      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[1,1,1,1,%22X%22],[%22%E2%80%A2%22,1,1,1,1,%22X%22],[%22%E2%80%A2%22,1,1,1,1,1,%22X%22],[1,%22%E2%80%A2%22,1,1,%22X%22],[1,%22%E2%80%A2%22,1,1,1,1,%22X%22],[%22%E2%80%A2%22,%22%E2%80%A2%22,1,1,%22X%22],[%22%E2%80%A2%22,%22%E2%80%A2%22,1,1,1,%22X%22],[%22%E2%80%A2%22,%22%E2%80%A2%22,1,1,1,1,%22X%22],[%22%E2%80%A2%22,%22%E2%80%A2%22,1,1,1,1,1,%22X%22]]}'
+      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],[%22Measure%22,%22Measure%22,%22Measure%22,%22Measure%22,%22Measure%22]]}'
       x-provider: 'ibm'
   /findByCategory:
     get:

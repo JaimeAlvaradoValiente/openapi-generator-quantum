@@ -66,7 +66,8 @@ def get_ibm():
                 code_array.append('circuit.cz(qreg_q[0], qreg_q[1])')
 
     code_array.append('backend = Aer.get_backend("qasm_simulator")')
-    code_array.append('job = execute(circuit, backend, shots = 100)')
+    code_array.append('x=int(shots)')
+    code_array.append('job = execute(circuit, backend, shots=x)')
     code_array.append('result = job.result()')
     code_array.append('counts = result.get_counts()')
     code_array.append('return counts')
@@ -91,7 +92,7 @@ def get_aws():
     code_array.append('from braket.circuits import Circuit')
     code_array.append('from braket.devices import LocalSimulator')
     code_array.append('from braket.aws import AwsDevice')
-    code_array.append('gate_machines_arn= { "riggeti_aspen8":"arn:aws:braket:::device/qpu/rigetti/Aspen-8", "riggeti_aspen9":"arn:aws:braket:::device/qpu/rigetti/Aspen-9", "riggeti_aspen11":"arn:aws:braket:::device/qpu/rigetti/Aspen-11", "riggeti_aspen_m1":"arn:aws:braket:us-west-1::device/qpu/rigetti/Aspen-M-1", "oqc_lucy":"arn:aws:braket:eu-west-2::device/qpu/oqc/Lucy", "borealis":"arn:aws:braket:us-east-1::device/qpu/xanadu/Borealis", "ionq":"arn:aws:braket:::device/qpu/ionq/ionQdevice", "sv1":"arn:aws:braket:::device/quantum-simulator/amazon/sv1", "tn1":"arn:aws:braket:::device/quantum-simulator/amazon/tn1", "local":"local"}')
+    code_array.append('gate_machines_arn= { "riggeti_aspen8":"arn:aws:braket:::device/qpu/rigetti/Aspen-8", "riggeti_aspen9":"arn:aws:braket:::device/qpu/rigetti/Aspen-9", "riggeti_aspen11":"arn:aws:braket:::device/qpu/rigetti/Aspen-11", "riggeti_aspen_m1":"arn:aws:braket:us-west-1::device/qpu/rigetti/Aspen-M-1", "DM1":"arn:aws:braket:::device/quantum-simulator/amazon/dm1","oqc_lucy":"arn:aws:braket:eu-west-2::device/qpu/oqc/Lucy", "borealis":"arn:aws:braket:us-east-1::device/qpu/xanadu/Borealis", "ionq":"arn:aws:braket:::device/qpu/ionq/ionQdevice", "sv1":"arn:aws:braket:::device/quantum-simulator/amazon/sv1", "tn1":"arn:aws:braket:::device/quantum-simulator/amazon/tn1", "local":"local"}')
     code_array.append('s3_folder = ("amazon-braket-7c2f2fa45286", "api")')
     
     code_array.append('circuit = Circuit()')
@@ -129,7 +130,7 @@ def get_aws():
                 
         
     
-    code_array.append('return executeAWS(s3_folder, gate_machines_arn[machine], circuit)')
+    code_array.append('return executeAWS(s3_folder, gate_machines_arn[machine], circuit, shots)')
 
     dict_response = {}
     dict_response['code'] = code_array
