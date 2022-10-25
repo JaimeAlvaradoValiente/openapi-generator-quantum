@@ -1,18 +1,20 @@
 # openapi-generator-quantum
 
-Añadida lógica para procesar la nueva variable extension (x-quantumcode) en:
+Added logic for processing new extension variables (x-quantumcode and x-provider) in:
+
 modules\openapi-generator\src\main\java.org.opneapitools.codegen\languajes\AbstractPythonConnexionServerCodegen
 
-Modificada la plantilla template en: 
+The template of the new python-quantum language has been modified: 
+
 modules\openapi-generator\src\main\resources\python-quantum\controller.mustache 
 
-## Comandos para lanzar 
+## Commands to perform the generation process:
+
+python3 main.py
 
 mvn clean package -DskipTests
 
 java -jar modules\openapi-generator-cli\target\openapi-generator-cli.jar generate -i openapi_quantum.yaml -g python-quantum -o c:\temp\quantum
 
-## Para desplegar el servicio generado
 
-python3 -m openapi_server
 
