@@ -1,13 +1,14 @@
 import connexion
 import six
 import time
+import os
 
 {{#imports}}{{import}}  # noqa: E501
 {{/imports}}
 from {{packageName}} import util
 
 def executeAWS(s3_folder, machine, circuit, shots):
-
+    os.environ['AWS_DEFAULT_REGION'] = 'us-west-2'
     if machine=="local":
         device = LocalSimulator()
         result = device.run(circuit, int(shots)).result()
