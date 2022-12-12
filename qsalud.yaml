@@ -1,0 +1,179 @@
+openapi: 3.0.2
+info:
+  title: Interfaz para las simulaciones cuánticas de QSalud
+  description: Esta API permitirá conectar la plataforma de viualización de los datos de los pacientes con la herramienta QPath. De esta forma se podrán lanzar las simulaciones y consultar los resultados de estas mediante microservicios.
+  version: '1.0'
+  termsOfService: 'https://quantum.spilab.es/terms'
+  contact:
+    name: Spilab
+    url: 'https://spilab.es'
+    email: info@spilab.es
+tags:
+  - name: quantum_simulations
+    description: Define los métodos para poder lanzar las simulaciones cuánticas y consultar los resultados
+paths:
+  /simulate:
+    post:
+      tags:
+        - quantum_simulations
+      summary: Lanza una simulación cuántica con los datos que se incluyen en la petición
+      operationId: simulate
+      parameters:
+        - name: machine
+          in: query
+          description: Nombre de la máquina donde ejecutar la simulación
+          required: true
+          style: form
+          explode: false
+          deprecated: true
+          schema:
+            type: string
+        - name: shots
+          in: query
+          description: Número de 'shots'
+          required: true
+          style: form
+          explode: false
+          deprecated: true
+          schema:
+            type: number
+      requestBody:
+        content: 
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/patient'
+      responses:
+        '200':
+          description: Operación correcta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job'
+        '405':
+          description: Ejecución no váilda
+      x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],[%22Measure%22,%22Measure%22,%22Measure%22,%22Measure%22,%22Measure%22]]}'
+      x-provider: 'ibm'
+      
+  /getResults:
+    get:
+      tags:
+        - quantum_simulations
+      summary: Obtiene los resultados de la simulación indicada
+      operationId: getResults
+      parameters:
+        - name: jobId
+          in: query
+          description: Identificador de la simulación
+          required: true
+          style: form
+          explode: false
+          deprecated: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación correcta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/result'
+        '404':
+          description: Simulación no encontrada
+  /getAllResults:
+    get:
+      tags:
+        - quantum_simulations
+      summary: Obtiene todos los identificadores de las simulaciones previas
+      operationId: getAllResults
+      responses:
+        '200':
+          description: Operación correcta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/results'
+        '404':
+          description: Simulación no encontrada
+
+components:
+  schemas:
+    job:
+      type: object
+      properties:
+        id:
+          type: string
+          example: be03e757-f528-4116-9d00-8b5fa11e56df
+        timestamp:
+          type: string
+          example: 1667996855
+        status:
+          type: string
+          example: created
+    result:
+      type: object
+      properties:
+        id:
+          type: string
+          example: be03e757-f528-4116-9d00-8b5fa11e56df
+        timestamp:
+          type: string
+          example: 1667996855
+        status:
+          type: string
+          example: finished
+        data:
+          type: object
+          properties:
+            nodes: 
+              type: array
+              items: 
+                type: object
+                properties:
+                  _type: 
+                    type: string
+                  _id: 
+                    type: string
+                  _key: 
+                    type: string
+                  registration_number: 
+                    type: string
+                  drug_name: 
+                    type: string
+                  pharmaceutical_form: 
+                    type: string
+                  posology: 
+                    type: string
+                  administration_route: 
+                    type: string
+    results:
+      type: array
+      items: 
+        type: object
+        properties:
+          id: 
+            type: string
+    patient:
+      type: object
+      properties:
+        nodes: 
+          type: array
+          items: 
+            type: object
+            properties:
+              _type: 
+                type: string
+              _id: 
+                type: string
+              _key: 
+                type: string
+              registration_number: 
+                type: string
+              drug_name: 
+                type: string
+              pharmaceutical_form: 
+                type: string
+              posology: 
+                type: string
+              administration_route: 
+                type: string
+            
