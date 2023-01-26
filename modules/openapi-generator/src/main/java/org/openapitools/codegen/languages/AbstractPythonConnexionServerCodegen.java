@@ -394,103 +394,134 @@ public abstract class AbstractPythonConnexionServerCodegen extends AbstractPytho
 
                                 String provider = (String) operation.getExtensions().get("x-provider");
                                 String quantum_url = (String) operation.getExtensions().get("x-quantumCode");
-                                System.out.println(provider);
-                                if(provider != null && provider.equals("aws")){
+
+                                if (quantum_url.endsWith(".py")) {
+                                    System.out.println("Es circuito en código");
+
                                     try {
-                                        String flask_url = "http://localhost:8081/code/aws";
-                                        URL url = new URL (flask_url);
-                                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                                        conn.setRequestProperty ("x-url", quantum_url);
-                                        conn.setRequestMethod("GET");
-
+                                    
+                                
+                                        URL url = new URL(quantum_url);
+                                        URLConnection connection = url.openConnection();
                                         BufferedReader reader = new BufferedReader(new InputStreamReader(
-                                                conn.getInputStream()));
-                                        String URL_line = null, URL_data = "", URL_imports = "";
-                                        
-                                        StringBuffer response = new StringBuffer();
-
+                                                connection.getInputStream()));
+                                        String URL_line = null, URL_data = "", URL_imports="";
+    
                                         while ((URL_line = reader.readLine()) != null) {
-                                            response.append(URL_line); 
-                                        }
-
-                                        //print in String
-                                        //System.out.println(response.toString());
-
-                                        //Read JSON response
-                                        JSONObject myResponse = new JSONObject(response.toString());
-                                        JSONArray myResponseArr = myResponse.getJSONArray("code");
-
-                                        System.out.println("result after Reading JSON Response");
-                                        for (int i = 0; i < myResponseArr.length(); i++) {
-                                            if (!myResponseArr.get(i).toString().contains("import")) {
-                                                if (URL_data.equals(""))
-                                                    URL_data +=  myResponseArr.get(i).toString() + "\n";
-                                                else 
-                                                URL_data += "    " + myResponseArr.get(i).toString() + "\n";
-                                            }
+                                            if (!URL_line.contains("import")) 
+                                                URL_data += "    " + URL_line + "\n";
                                             else {
-                                                URL_imports += myResponseArr.get(i).toString() + "\n";
+                                                URL_imports += URL_line + "\n";
                                             }
-            
                                         }
-
                                         System.out.println(URL_data);
                                         operation.getExtensions().replace("x-quantumCode", URL_data);
                                         System.out.println(URL_imports);
                                         operation.addExtension("x-quantum-imports", URL_imports);
-
+    
                                     } catch (Exception e) {
                                         operation.getExtensions().replace("x-quantumCode", "#Check the URL entered");
                                         e.printStackTrace();}
+
                                 }
-                                else if(provider != null && provider.equals("ibm")){
-                                    try {
-                                        String flask_url = "http://localhost:8081/code/ibm";
-                                        URL url = new URL (flask_url);
-                                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                                        conn.setRequestProperty ("x-url", quantum_url);
-                                        conn.setRequestMethod("GET");
+                                else {
+                                    System.out.println("Es circuito en quirk");
 
-                                        BufferedReader reader = new BufferedReader(new InputStreamReader(
-                                                conn.getInputStream()));
-                                        String URL_line = null, URL_data = "", URL_imports = "";
-                                        
-                                        StringBuffer response = new StringBuffer();
-
-                                        while ((URL_line = reader.readLine()) != null) {
-                                            response.append(URL_line); 
-                                        }
-
-                                        //print in String
-                                        //System.out.println(response.toString());
-
-                                        //Read JSON response
-                                        JSONObject myResponse = new JSONObject(response.toString());
-                                        JSONArray myResponseArr = myResponse.getJSONArray("code");
-
-                                        System.out.println("result after Reading JSON Response");
-                                        for (int i = 0; i < myResponseArr.length(); i++) {
-                                            if (!myResponseArr.get(i).toString().contains("import")) {
-                                                if (URL_data.equals(""))
-                                                    URL_data +=  myResponseArr.get(i).toString() + "\n";
-                                                else 
-                                                URL_data += "    " + myResponseArr.get(i).toString() + "\n";
+                                    if(provider != null && provider.equals("aws")){
+                                        try {
+                                            String flask_url = "http://localhost:8081/code/aws";
+                                            URL url = new URL (flask_url);
+                                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                                            conn.setRequestProperty ("x-url", quantum_url);
+                                            conn.setRequestMethod("GET");
+    
+                                            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                                                    conn.getInputStream()));
+                                            String URL_line = null, URL_data = "", URL_imports = "";
+                                            
+                                            StringBuffer response = new StringBuffer();
+    
+                                            while ((URL_line = reader.readLine()) != null) {
+                                                response.append(URL_line); 
                                             }
-                                            else {
-                                                URL_imports += myResponseArr.get(i).toString() + "\n";
+    
+                                    
+    
+                                            //Read JSON response
+                                            JSONObject myResponse = new JSONObject(response.toString());
+                                            JSONArray myResponseArr = myResponse.getJSONArray("code");
+    
+                                            
+                                            for (int i = 0; i < myResponseArr.length(); i++) {
+                                                if (!myResponseArr.get(i).toString().contains("import")) {
+                                                    if (URL_data.equals(""))
+                                                        URL_data +=  myResponseArr.get(i).toString() + "\n";
+                                                    else 
+                                                    URL_data += "    " + myResponseArr.get(i).toString() + "\n";
+                                                }
+                                                else {
+                                                    URL_imports += myResponseArr.get(i).toString() + "\n";
+                                                }
+                
                                             }
-            
-                                        }
-
-                                        System.out.println(URL_data);
-                                        operation.getExtensions().replace("x-quantumCode", URL_data);
-                                        System.out.println(URL_imports);
-                                        operation.addExtension("x-quantum-imports", URL_imports);
-
-                                    } catch (Exception e) {
-                                        operation.getExtensions().replace("x-quantumCode", "#Check the URL entered");
-                                        e.printStackTrace();}
-                                }
+    
+                                            
+                                            operation.getExtensions().replace("x-quantumCode", URL_data);
+                                            
+                                            operation.addExtension("x-quantum-imports", URL_imports);
+    
+                                        } catch (Exception e) {
+                                            operation.getExtensions().replace("x-quantumCode", "#Check the URL entered");
+                                            e.printStackTrace();}
+                                    }
+                                    else if(provider != null && provider.equals("ibm")){
+                                        try {
+                                            String flask_url = "http://localhost:8081/code/ibm";
+                                            URL url = new URL (flask_url);
+                                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                                            conn.setRequestProperty ("x-url", quantum_url);
+                                            conn.setRequestMethod("GET");
+    
+                                            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                                                    conn.getInputStream()));
+                                            String URL_line = null, URL_data = "", URL_imports = "";
+                                            
+                                            StringBuffer response = new StringBuffer();
+    
+                                            while ((URL_line = reader.readLine()) != null) {
+                                                response.append(URL_line); 
+                                            }
+    
+                                            
+    
+                                            //Read JSON response
+                                            JSONObject myResponse = new JSONObject(response.toString());
+                                            JSONArray myResponseArr = myResponse.getJSONArray("code");
+    
+                                           
+                                            for (int i = 0; i < myResponseArr.length(); i++) {
+                                                if (!myResponseArr.get(i).toString().contains("import")) {
+                                                    if (URL_data.equals(""))
+                                                        URL_data +=  myResponseArr.get(i).toString() + "\n";
+                                                    else 
+                                                    URL_data += "    " + myResponseArr.get(i).toString() + "\n";
+                                                }
+                                                else {
+                                                    URL_imports += myResponseArr.get(i).toString() + "\n";
+                                                }
+                
+                                            }
+    
+                                            
+                                            operation.getExtensions().replace("x-quantumCode", URL_data);
+                                            
+                                            operation.addExtension("x-quantum-imports", URL_imports);
+    
+                                        } catch (Exception e) {
+                                            operation.getExtensions().replace("x-quantumCode", "#Check the URL entered");
+                                            e.printStackTrace();}
+                                    }
+                                } 
                             }
                         }
                         if (operation.getParameters() != null) {
