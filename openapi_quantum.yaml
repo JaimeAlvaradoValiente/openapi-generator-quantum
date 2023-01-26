@@ -47,6 +47,39 @@ paths:
           description: Invalid execution
       x-quantumCode: 'https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22H%22,%22H%22],[%22Measure%22,%22Measure%22,%22Measure%22,%22Measure%22,%22Measure%22]]}'
       x-provider: 'aws'
+  /circuit/ShorAWS:
+    get:
+      tags:
+        - quantum_code
+      summary: Get the circuit implementation of Shor Algorithm
+      description: ''
+      operationId: shor_circuitAWS
+      parameters:
+        - name: machine
+          in: query
+          description: Name of the machine where to execute
+          required: true
+          style: form
+          explode: false
+          deprecated: true
+          schema:
+            type: string
+        - name: shots
+          in: query
+          description: Number of shots
+          required: true
+          style: form
+          explode: false
+          deprecated: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid execution
+      x-quantumCode: 'https://raw.githubusercontent.com/JaimeAlvaradoValiente/openapi-generator-quantum/main/shor.py'
+      x-provider: 'aws'
   /circuit/randomIBM:
     get:
       tags:
