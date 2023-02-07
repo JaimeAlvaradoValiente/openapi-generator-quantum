@@ -18,30 +18,29 @@ def get_ibm():
     url = request.headers.get('x-url')
     url = unquote(url)
 
-    print(url)
     circuit=url.split('circuit=')[1]
     y = json.loads(circuit)
     code_array = []
-    # the result is a Python dictionary:
-    print(y['cols'])
+
+    max_len = max([len(i) for i in y['cols']])
 
     code_array.append('from qiskit import execute, QuantumRegister, ClassicalRegister, QuantumCircuit, Aer')
     code_array.append('from numpy import pi')
 
-    code_array.append('qreg_q = QuantumRegister('+str(len(y['cols'][0]))+', \'q\')')
-    code_array.append('creg_c = ClassicalRegister('+str(len(y['cols'][0]))+', \'c\')')
+    code_array.append('qreg_q = QuantumRegister('+str(max_len)+', \'q\')')
+    code_array.append('creg_c = ClassicalRegister('+str(max_len)+', \'c\')')
     code_array.append('circuit = QuantumCircuit(qreg_q, creg_c)')
 
     for j in range(0, len(y['cols'])):
         #for x in y['cols'][j]:
 
         x=y['cols'][j]
-
+        #cuenta cuántas puertas de cada tipo tenemos en una columna
         g = [[x.count(z), z] for z in set(x)]
 
         l=len(g)
 
-        if l==1:
+        if l==1 or (l==2 and ((g[0][1]=='H' and g[1][1]==1) or (g[0][1]==1 and g[1][1]=='H') or (g[0][1]=='Z' and g[1][1]==1) or (g[0][1]==1 and g[1][1]=='Z') or (g[0][1]=='X' and g[1][1]==1) or (g[0][1]==1 and g[1][1]=='X'))):
             if x[0] == 'Swap' and x[1] == 'Swap':
                 code_array.append('circuit.swap(qreg_q[0], qreg_q[1])')
             elif x[0] == 'Measure':
@@ -55,15 +54,11 @@ def get_ibm():
                         code_array.append('circuit.z(qreg_q['+str(i)+'])')
                     elif x[i] == 'X':
                         code_array.append('circuit.x(qreg_q['+str(i)+'])')
-        elif l==2:
-            if x[0] == 'X' and x[1] == '•':
-                code_array.append('circuit.cx(qreg_q[1], qreg_q[0])')
-            elif x[1] == 'X' and x[0] == '•':
-                code_array.append('circuit.cx(qreg_q[0], qreg_q[1])')
-            elif x[0] == 'Z' and x[1] == '•':
-                code_array.append('circuit.cz(qreg_q[1], qreg_q[0])')
-            elif x[1] == 'Z' and x[0] == '•':
-                code_array.append('circuit.cz(qreg_q[0], qreg_q[1])')
+        elif l==2 or l==3:
+            if 'X' in x and '•' in x:
+                code_array.append('circuit.cx(qreg_q['+str(x.index("X"))+'], qreg_q['+str(x.index("•"))+'])')
+            elif 'Z' in x and '•' in x:
+                code_array.append('circuit.cx(qreg_q['+str(x.index("Z"))+'], qreg_q['+str(x.index("•"))+'])')
 
     code_array.append('backend = Aer.get_backend("qasm_simulator")')
     code_array.append('x=int(shots)')
@@ -81,12 +76,9 @@ def get_aws():
     url = request.headers.get('x-url')
     url = unquote(url)
 
-    print(url)
     circuit=url.split('circuit=')[1]
     y = json.loads(circuit)
     code_array = []
-    # the result is a Python dictionary:
-    print(y['cols'])
 
     code_array.append('from braket.circuits import Gate')
     code_array.append('from braket.circuits import Circuit')
@@ -98,7 +90,6 @@ def get_aws():
     code_array.append('circuit = Circuit()')
 
     for j in range(0, len(y['cols'])):
-        #for x in y['cols'][j]:
 
         x=y['cols'][j]
 
@@ -106,7 +97,7 @@ def get_aws():
 
         l=len(g)
 
-        if l==1:
+        if l==1 or (l==2 and ((g[0][1]=='H' and g[1][1]==1) or (g[0][1]==1 and g[1][1]=='H') or (g[0][1]=='Z' and g[1][1]==1) or (g[0][1]==1 and g[1][1]=='Z') or (g[0][1]=='X' and g[1][1]==1) or (g[0][1]==1 and g[1][1]=='X'))):
             if x[0] == 'Swap' and x[1] == 'Swap':
                 code_array.append('circuit.swap(0,1)')
             else:
@@ -117,15 +108,11 @@ def get_aws():
                         code_array.append('circuit.z('+str(i)+')')
                     elif x[i] == 'X':
                         code_array.append('circuit.x('+str(i)+')')
-        elif l==2:
-            if x[0] == 'X' and x[1] == '•':
-                code_array.append('circuit.cnot(1, 0)')
-            elif x[1] == 'X' and x[0] == '•':
-                code_array.append('circuit.cnot(0, 1)')
-            elif x[0] == 'Z' and x[1] == '•':
-                code_array.append('circuit.cz(1, 0)')
-            elif x[1] == 'Z' and x[0] == '•':
-                code_array.append('circuit.cz(0, 1)')
+        elif l==2 or l==3:
+            if 'X' in x and '•' in x:
+                code_array.append('circuit.cnot('+str(x.index("X"))+', '+str(x.index("•"))+')')
+            elif 'Z' in x and '•' in x:
+                code_array.append('circuit.cz('+str(x.index("Z"))+', '+str(x.index("•"))+')')
 
                 
         
