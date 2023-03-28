@@ -392,7 +392,7 @@ public abstract class AbstractPythonConnexionServerCodegen extends AbstractPytho
                             if (operation.getExtensions().get("x-quantumCode") != null) {
                                 
 
-                                String provider = (String) operation.getExtensions().get("x-provider");
+                                String provider = (String) operation.getExtensions().get("x-quantumProvider");
                                 String quantum_url = (String) operation.getExtensions().get("x-quantumCode");
 
                                 if (quantum_url.endsWith(".py")) {
@@ -429,7 +429,7 @@ public abstract class AbstractPythonConnexionServerCodegen extends AbstractPytho
 
                                     if(provider != null && provider.equals("aws")){
                                         try {
-                                            String flask_url = "http://54.155.193.167:8081/code/aws";
+                                            String flask_url = "http://quantumservicesdeployment.spilab.es:8081/code/aws";
                                             URL url = new URL (flask_url);
                                             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                                             conn.setRequestProperty ("x-url", quantum_url);
@@ -476,7 +476,7 @@ public abstract class AbstractPythonConnexionServerCodegen extends AbstractPytho
                                     }
                                     else if(provider != null && provider.equals("ibm")){
                                         try {
-                                            String flask_url = "http://54.155.193.167:8081/code/ibm";
+                                            String flask_url = "http://quantumservicesdeployment.spilab.es:8081/code/ibm";
                                             URL url = new URL (flask_url);
                                             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                                             conn.setRequestProperty ("x-url", quantum_url);
