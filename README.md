@@ -20,6 +20,8 @@ Two parameters have been included, machine and shots:
 
 There is an example at [https://raw.githubusercontent.com/openapi-generator-quantum/main/openapi_quantum.yaml](https://raw.githubusercontent.com/JaimeAlvaradoValiente/openapi-generator-quantum/main/openapi_quantum.yaml)
 
+### Added logic
+
 Added logic for processing new extension variables (x-quantumcode and x-provider) in:
 
 modules\openapi-generator\src\main\java.org.opneapitools.codegen\languajes\AbstractPythonConnexionServerCodegen
