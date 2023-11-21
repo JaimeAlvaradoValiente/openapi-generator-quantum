@@ -55,10 +55,10 @@ def get_ibm():
                     elif x[i] == 'X':
                         code_array.append('circuit.x(qreg_q['+str(i)+'])')
         elif l==2 or l==3:
-            if 'X' in x and '•' in x:
-                code_array.append('circuit.cx(qreg_q['+str(x.index("X"))+'], qreg_q['+str(x.index("•"))+'])')
-            elif 'Z' in x and '•' in x:
-                code_array.append('circuit.cx(qreg_q['+str(x.index("Z"))+'], qreg_q['+str(x.index("•"))+'])')
+            if 'X' in x and '\x95' in x:
+                code_array.append('circuit.cx(qreg_q['+str(x.index("X"))+'], qreg_q['+str(x.index("\x95"))+'])')
+            elif 'Z' in x and '\x95' in x:
+                code_array.append('circuit.cx(qreg_q['+str(x.index("Z"))+'], qreg_q['+str(x.index("\x95"))+'])')
 
     code_array.append('backend = Aer.get_backend("qasm_simulator")')
     code_array.append('x=int(shots)')
@@ -109,10 +109,10 @@ def get_aws():
                     elif x[i] == 'X':
                         code_array.append('circuit.x('+str(i)+')')
         elif l==2 or l==3:
-            if 'X' in x and '•' in x:
-                code_array.append('circuit.cnot('+str(x.index("X"))+', '+str(x.index("•"))+')')
-            elif 'Z' in x and '•' in x:
-                code_array.append('circuit.cz('+str(x.index("Z"))+', '+str(x.index("•"))+')')
+            if 'X' in x and '\x95' in x:
+                code_array.append('circuit.cnot('+str(x.index("X"))+', '+str(x.index("\x95"))+')')
+            elif 'Z' in x and '\x95' in x:
+                code_array.append('circuit.cz('+str(x.index("Z"))+', '+str(x.index("\x95"))+')')
 
                 
         
