@@ -331,4 +331,3 @@ if __name__ == '__main__':
    updatePorts()
    print('hecho')
    app.run(host='0.0.0.0', port=8081, debug=False)
-
