@@ -127,9 +127,11 @@ def get_ibm():
 
     max_len = max([len(i) for i in y['cols']])
 
-    code_array.append('from qiskit import execute, QuantumRegister, ClassicalRegister, QuantumCircuit, Aer')
+    code_array.append('from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, transpile')
     code_array.append('from numpy import pi')
-    code_array.append('from qiskit import IBMQ')
+    code_array.append('from qiskit.providers.basic_provider import BasicProvider')
+    code_array.append('from qiskit_ibm_provider import IBMProvider')
+    code_array.append('import qiskit.qasm3')
 
     code_array.append('qreg_q = QuantumRegister('+str(max_len)+', \'q\')')
     code_array.append('creg_c = ClassicalRegister('+str(max_len)+', \'c\')')
@@ -165,18 +167,19 @@ def get_ibm():
             elif 'Z' in x and '\x95' in x:
                 code_array.append('circuit.cx(qreg_q['+str(x.index("Z"))+'], qreg_q['+str(x.index("\x95"))+'])')
     code_array.append('if machine == "local":')
-    code_array.append('    backend = Aer.get_backend("qasm_simulator")')
+    code_array.append('    backend = BasicProvider().get_backend("basic_simulator")')
     code_array.append('    x=int(shots)')
-    code_array.append('    job = execute(circuit, backend, shots=x)')
+    code_array.append('    transpiled_circuit = transpile(circuit, backend)')
+    code_array.append('    job = backend.run(transpiled_circuit, shots=x)')
     code_array.append('    result = job.result()')
     code_array.append('    counts = result.get_counts()')
     code_array.append('    return counts')
     code_array.append('else:')
-    code_array.append('    IBMQ.load_account()')
-    code_array.append('    provider = IBMQ.get_provider(hub="ibm-q", group="open", project="main")')
+    code_array.append('    provider = IBMProvider()')
     code_array.append('    backend = provider.get_backend(gate_machines_arn[machine])')
     code_array.append('    x=int(shots)')
-    code_array.append('    job = execute(circuit, backend, shots=x)')
+    code_array.append('    transpiled_circuit = transpile(circuit, backend)')
+    code_array.append('    job = backend.run(transpiled_circuit, backend, shots=x)')
     code_array.append('    result = job.result()')
     code_array.append('    counts = result.get_counts()')
     code_array.append('    return counts')
@@ -331,3 +334,4 @@ if __name__ == '__main__':
    updatePorts()
    print('hecho')
    app.run(host='0.0.0.0', port=8081, debug=False)
+

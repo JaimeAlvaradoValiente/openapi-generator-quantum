@@ -116,10 +116,12 @@ def {{operationId}}({{#allParams}}{{paramName}}{{^required}}=None{{/required}}{{
                 {{^isFile}}
                     {{^isUuid}}
     
+    parameterDict={}
     if connexion.request.is_json:
         {{paramName}} = {{baseType}}{{^baseType}}{{#dataType}} {{.}}{{/dataType}}{{/baseType}}.from_dict(connexion.request.get_json()).to_dict()  # noqa: E501
         for key in {{paramName}}.keys():
             globals()[key] = {{paramName}}[key]
+            parameterDict[key] = {{paramName}}[key]
                     {{/isUuid}}
                 {{/isFile}}
             {{/isPrimitiveType}}

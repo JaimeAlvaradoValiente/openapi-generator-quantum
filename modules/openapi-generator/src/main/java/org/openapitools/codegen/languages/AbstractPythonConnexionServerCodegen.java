@@ -522,6 +522,51 @@ public abstract class AbstractPythonConnexionServerCodegen extends AbstractPytho
                                             e.printStackTrace();}
                                     }
                                 } 
+                            } else if (operation.getExtensions().get("x-quantumCodeQASM") != null) {
+
+                                try {
+                                    String quantum_code_string = (String) operation.getExtensions().get("x-quantumCodeQASM");
+                                    String URL_data = "", URL_imports = "";
+
+                                    URL_imports += "from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, transpile" + "\n" + "from qiskit.providers.basic_provider import BasicProvider" + "\n" + "from qiskit_ibm_provider import IBMProvider" +"\n" + "from numpy import pi" + "\n" + "import qiskit.qasm3" + "\n";
+
+                                    URL_data += "gate_machines_arn = {\"local\":\"local\", \"ibm_brisbane\":\"ibm_brisbane\", \"ibm_osaka\":\"ibm_osaka\", \"ibm_kyoto\":\"ibm_kyoto\", \"simulator_stabilizer\":\"simulator_stabilizer\", \"simulator_mps\":\"simulator_mps\", \"simulator_extended_stabilizer\":\"simulator_extended_stabilizer\", \"simulator_statevector\":\"simulator_statevector\"}"+ "\n";
+                                    
+                                    if (quantum_code_string.contains("OPENQASM 2.0")) {
+                                        URL_data += "    " + "circuit = QuantumCircuit.from_qasm_str("+ quantum_code_string.toString() + ")\n";
+                                    } else {
+                                        URL_data += "    " + "circuit = qiskit.qasm3.loads("+ quantum_code_string.toString() + ")\n";
+                                    }
+                                    
+                                    
+                                    String codigo = "    if connexion.request.is_json:\n" +
+                                        "        circuit.assign_parameters(parameterDict, inplace = True)\n"+
+                                        "    if machine == \"local\":\n" +
+                                        "        backend = BasicProvider().get_backend(\"basic_simulator\")\n" +
+                                        "        x = int(shots)\n" +
+                                        "        transpiled_circuit = transpile(circuit, backend)\n" +
+                                        "        job = backend.run(transpiled_circuit, shots=x)\n" +
+                                        "        result = job.result()\n" +
+                                        "        counts = result.get_counts()\n" +
+                                        "        return counts\n" +
+                                        "    else:\n" +
+                                        "        provider = IBMProvider()\n" +
+                                        "        backend = provider.get_backend(gate_machines_arn[machine])\n" +
+                                        "        x = int(shots)\n" +
+                                        "        transpiled_circuit = transpile(circuit, backend)\n" +
+                                        "        job = backend.run(transpiled_circuit, backend, shots=x)\n" +
+                                        "        result = job.result()\n" +
+                                        "        counts = result.get_counts()\n" +
+                                        "        return counts\n";
+                                    
+                                    URL_data += codigo;
+
+                                    operation.getExtensions().replace("x-quantumCode", URL_data);        
+                                    operation.addExtension("x-quantum-imports", URL_imports);
+
+                                } catch (Exception e) {
+                                operation.getExtensions().replace("x-quantumCodeQASM", "#Check the String entered");
+                                e.printStackTrace();}
                             }
                         }
                         if (operation.getParameters() != null) {
