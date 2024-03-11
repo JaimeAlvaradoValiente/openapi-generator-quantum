@@ -8,13 +8,31 @@ import socket
 import yaml
 import requests
 
-
-
+import random, string
+import re
 
 global ports
 
 #SETUP APIs
 app = Flask(__name__)
+
+def get_type_and_name(item):
+    # Definir el patrón regex para buscar el tipo y el nombre de la variable
+    pattern = r"input (\w+)\[\d+\] (\w+)"
+
+    # Realizar la búsqueda utilizando el patrón regex
+    coincidence = re.match(pattern, item)
+
+    if coincidence:
+        typ = coincidence.group(1)
+        name = coincidence.group(2)
+        return typ, name
+    else:
+        return None, None
+
+
+
+
 
 @app.route('/hello', methods=['GET'])
 def test():
@@ -52,7 +70,12 @@ def update_circuit_url():
     data_dict = json.loads(data)
 
     circuit_name = data_dict.get('circuit_name')
-    new_url = data_dict.get('new_url')
+    new_url=None
+    new_circuit_string=None
+    if 'new_url' in data_dict:
+        new_url = data_dict.get('new_url')
+    else :
+        new_circuit_string = data_dict.get('new_circuit_string')
     yaml_url = data_dict.get('yaml_data')
     name= data_dict.get('name')
     docker_hub_repo = data_dict.get('docker_hub_repo')
@@ -69,7 +92,41 @@ def update_circuit_url():
         if 'paths' in yaml_dict and f'/circuit/{circuit_name}' in yaml_dict['paths']:
 
             #circuit = yaml_dict['paths'][f'/circuit/{circuit_name}']
-            yaml_dict['paths'][f'/circuit/{circuit_name}']['get']['x-quantumCode'] = new_url
+            if new_url is not None:
+                if 'get' in yaml_dict['paths'][f'/circuit/{circuit_name}']:
+                    yaml_dict['paths'][f'/circuit/{circuit_name}']['get']['x-quantumCode'] = new_url
+                elif 'post' in yaml_dict['paths'][f'/circuit/{circuit_name}']:
+                    yaml_dict['paths'][f'/circuit/{circuit_name}']['post']['x-quantumCode'] = new_url
+            else:
+                if 'get' in yaml_dict['paths'][f'/circuit/{circuit_name}']:
+                    yaml_dict['paths'][f'/circuit/{circuit_name}']['get']['x-quantumCode']=None
+                    yaml_dict['paths'][f'/circuit/{circuit_name}']['get']['x-quantumCodeQASM']="\""+new_circuit_string+"\""
+                
+                
+                if 'post' in yaml_dict['paths'][f'/circuit/{circuit_name}']:
+                    lines=new_circuit_string.split('\n')
+                    parameters=[]
+                    # Iterar sobre cada item en la lista
+                    new_circuit_str=""
+                    for item in lines:
+                        new_circuit_str=new_circuit_str+item
+                        tipo, nombre = get_type_and_name(item)
+                        if tipo and nombre:
+                            parameters.append([tipo, nombre])
+                    yaml_dict['paths'][f'/circuit/{circuit_name}']['post']['x-quantumCode']=None
+                    yaml_dict['paths'][f'/circuit/{circuit_name}']['post']['x-quantumCodeQASM']="\""+new_circuit_str+"\""
+                    string_random = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
+                    if len(parameters) != 0:
+                        new_dict={'content' : {'application/json':{'schema':{'$ref':{}}}}}
+                        new_dict['content']['application/json']['schema']['$ref']='#/components/schemas/'+string_random
+                        yaml_dict['paths'][f'/circuit/{circuit_name}']['post']['requestBody']=new_dict
+                        new_schema={'properties': {}}
+                        for parameter in parameters:
+                            new_schema['properties'][parameter[1]]={}
+                            new_schema['properties'][parameter[1]]['example']=0
+                            new_schema['properties'][parameter[1]]['format']=parameter[0]
+                            new_schema['properties'][parameter[1]]['type']='number'
+                            yaml_dict['components']['schemas'][string_random]=new_schema
 
             #yaml_dict['paths'][f'/circuit/{circuit_name}']['x-quantumCode'] = new_url
             stream = 'document.yaml'
@@ -333,5 +390,5 @@ if __name__ == '__main__':
    ports={}
    updatePorts()
    print('hecho')
-   app.run(host='0.0.0.0', port=8081, debug=False)
+   app.run(host='0.0.0.0', port=8080, debug=False)
 
