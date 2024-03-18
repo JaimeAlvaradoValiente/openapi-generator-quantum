@@ -60,7 +60,12 @@ def createContainer():
     c=client.containers.create(image=name, ports={8080: port}, name=name)
     c.start()
     path='http://quantumservicesdeployment.spilab.es:'+str(port)+'/ui'
-    return "<html><h1><a href='" + path + "'>" + path + "</a></h1><h1>Container name: " + name + "</h1></html>"
+    response_data = {
+        "path": path,
+        "container_name": name
+    }
+    #return "<html><h1><a href='" + path + "'>" + path + "</a></h1><h1>Container name: " + name + "</h1></html>"
+    return response_data
 
 
 @app.route('/update_circuit', methods=['POST'])
@@ -160,8 +165,12 @@ def update_circuit_url():
             c=client.containers.create(image=name, ports={8080: port}, name=name)
             c.start()
             path='http://quantumservicesdeployment.spilab.es:'+str(port)+'/ui'
-            return "<html><h1 href='"+path+"'>"+path+"<\h1><\html>"
-
+            response_data = {
+                "path": path,
+                "container_name": name
+            }
+            #return "<html><h1><a href='" + path + "'>" + path + "</a></h1><h1>Container name: " + name + "</h1></html>"
+            return response_data
         else:
             return jsonify({'error': f'A circuit with the name {circuit_name} was not found in the provided YAML.'}), 404
         
