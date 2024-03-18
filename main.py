@@ -16,23 +16,17 @@ global ports
 #SETUP APIs
 app = Flask(__name__)
 
-def get_type_and_name(item):
+def get_parameters(qasmString):
     # Definir el patrón regex para buscar el tipo y el nombre de la variable
     pattern = r"input (\w+)\[\d+\] (\w+)"
 
     # Realizar la búsqueda utilizando el patrón regex
-    coincidence = re.match(pattern, item)
+    coincidences = re.findall(pattern, qasmString)
 
-    if coincidence:
-        typ = coincidence.group(1)
-        name = coincidence.group(2)
-        return typ, name
+    if coincidences:
+        return [[coincidence[0], coincidence[1]] for coincidence in coincidences]
     else:
         return None, None
-
-
-
-
 
 @app.route('/hello', methods=['GET'])
 def test():
@@ -84,7 +78,7 @@ def update_circuit_url():
     yaml_url = data_dict.get('yaml_data')
     name= data_dict.get('name')
     docker_hub_repo = data_dict.get('docker_hub_repo')
-   
+
 
     try:
         response = requests.get(yaml_url)
@@ -92,7 +86,7 @@ def update_circuit_url():
 
         # Parsear el YAML
         yaml_dict = yaml.safe_load(yaml_data)
-        
+
         # Buscar el circuito con el nombre proporcionado
         if 'paths' in yaml_dict and f'/circuit/{circuit_name}' in yaml_dict['paths']:
 
@@ -106,18 +100,16 @@ def update_circuit_url():
                 if 'get' in yaml_dict['paths'][f'/circuit/{circuit_name}']:
                     yaml_dict['paths'][f'/circuit/{circuit_name}']['get']['x-quantumCode']=None
                     yaml_dict['paths'][f'/circuit/{circuit_name}']['get']['x-quantumCodeQASM']="\""+new_circuit_string+"\""
-                
-                
+
+
                 if 'post' in yaml_dict['paths'][f'/circuit/{circuit_name}']:
+                    parameters=get_parameters(new_circuit_string)
                     lines=new_circuit_string.split('\n')
-                    parameters=[]
+
                     # Iterar sobre cada item en la lista
                     new_circuit_str=""
                     for item in lines:
                         new_circuit_str=new_circuit_str+item
-                        tipo, nombre = get_type_and_name(item)
-                        if tipo and nombre:
-                            parameters.append([tipo, nombre])
                     yaml_dict['paths'][f'/circuit/{circuit_name}']['post']['x-quantumCode']=None
                     yaml_dict['paths'][f'/circuit/{circuit_name}']['post']['x-quantumCodeQASM']="\""+new_circuit_str+"\""
                     string_random = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
@@ -135,11 +127,11 @@ def update_circuit_url():
 
             #yaml_dict['paths'][f'/circuit/{circuit_name}']['x-quantumCode'] = new_url
             stream = 'document.yaml'
-            with open(stream, 'w') as f: 
+            with open(stream, 'w') as f:
                 yaml.dump(yaml_dict, f)
             print('Circuit URL successfully updated in YAML')
-        
-        
+
+
             cmd='java -jar openapi-generator-cli.jar generate -i ./'+stream+' -g python-quantum -o ./openapi_server >NUL'
             #https://raw.githubusercontent.com/JaimeAlvaradoValiente/openapi-generator-quantum/main/openapi_quantum.yaml -g python-quantum -o ../openapi_server >NUL"')
             os.system(cmd)
@@ -173,7 +165,7 @@ def update_circuit_url():
             return response_data
         else:
             return jsonify({'error': f'A circuit with the name {circuit_name} was not found in the provided YAML.'}), 404
-        
+
     except Exception as e:
         return jsonify({'error': f'Error al cargar o procesar el YAML: {str(e)}'}), 500
 
@@ -184,7 +176,7 @@ def update_circuit_url():
 def get_ibm():
     url = request.headers.get('x-url')
     url = unquote(url)
-    
+
 
     circuit=url.split('circuit=')[1]
     y = json.loads(circuit)
@@ -259,7 +251,7 @@ def get_ibm():
 def get_aws():
     url = request.headers.get('x-url')
     url = unquote(url)
-    
+
 
     circuit=url.split('circuit=')[1]
     y = json.loads(circuit)
@@ -271,7 +263,7 @@ def get_aws():
     code_array.append('from braket.aws import AwsDevice')
     code_array.append('gate_machines_arn= {"riggeti_aspen_m3":"arn:aws:braket:us-west-1::device/qpu/rigetti/Aspen-M-3", "DM1":"arn:aws:braket:::device/quantum-simulator/amazon/dm1", "oqc_lucy":"arn:aws:braket:eu-west-2::device/qpu/oqc/Lucy", "ionq_aria1":"arn:aws:braket:us-east-1::device/qpu/ionq/Aria-1", "ionq_aria2":"arn:aws:braket:us-east-1::device/qpu/ionq/Aria-2", "ionq_forte":"arn:aws:braket:us-east-1::device/qpu/ionq/Forte", "ionq_harmony":"arn:aws:braket:us-east-1::device/qpu/ionq/Harmony", "sv1":"arn:aws:braket:::device/quantum-simulator/amazon/sv1", "tn1":"arn:aws:braket:::device/quantum-simulator/amazon/tn1", "local":"local"}')
     code_array.append('s3_folder = ("amazon-braket-7c2f2fa45286", "api")')
-    
+
     code_array.append('circuit = Circuit()')
 
     for j in range(0, len(y['cols'])):
@@ -299,9 +291,9 @@ def get_aws():
             elif 'Z' in x and '\x95' in x:
                 code_array.append('circuit.cz('+str(x.index("Z"))+', '+str(x.index("\x95"))+')')
 
-                
-        
-    
+
+
+
     code_array.append('return executeAWS(s3_folder, gate_machines_arn[machine], circuit, shots)')
 
     dict_response = {}
@@ -317,7 +309,7 @@ def variosIbm():
     circuitos = []
     for i in request.json.keys():
         circuitos.append(ast.literal_eval(unquote(request.json[i]).split('circuit=')[1]))
-        
+
 
     desplazamiento = []
     for y in circuitos:
@@ -366,7 +358,7 @@ def variosIbm():
                     code_array.append('circuit.cx(qreg_q['+str(x.index("X")+despl)+'], qreg_q['+str(x.index("\x95")+despl)+'])')
                 elif 'Z' in x and '\x95' in x:
                     code_array.append('circuit.cx(qreg_q['+str(x.index("Z")+despl)+'], qreg_q['+str(x.index("\x95")+despl)+'])')
-                    
+
     code_array.append('return circuit')
 
     dict_response = {}
