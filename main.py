@@ -65,8 +65,7 @@ def createContainer():
 @app.route('/update_circuit', methods=['POST'])
 def update_circuit_url():
     port=getFreePort()
-    data = request.data.decode('utf-8')
-    data_dict = json.loads(data)
+    data_dict = request.json
 
     circuit_name = data_dict.get('circuit_name')
     new_url=None
